@@ -1,20 +1,21 @@
 #!/usr/bin/python
 
-# Name: SDCToken
-# Purpose: object to handle token retreival/refresh for Syniverse Developer Community APIs.
-#
-# Example curl access
-# curl -vks 'https://api.syniverse.com/saop-rest-data/v1/apptoken-refresh?consumerkey=<consumer_key>&consumersecret=<consumer_secret>&oldtoken=<original_token>&validity=<validity_period>'
-#
-# Fields:
-# consumerkey - required - consumer key visible from SDC Application screens.
-# consumersecret - required - consumer secret visible from SDC Application screens.
-# oldtoken - required - an old token from the SDC Application screens.
-# validity - optional - validity periods are in seconds.  Defaults to 3600 (1 hour)
-# 		0 sets a non-expring token.
-# The validity returned by the refresh call will be either the length for a new token,
-# or the remaining duration for an existing token.  If a valid active token exists, that token
-# is the one that will be returned.
+""" Token generation and refresh for Syniverse Developer Community APIs
+
+Purpose: object to handle token retreival/refresh for Syniverse Developer Community APIs.
+
+Example curl access
+curl -vks 'https://api.syniverse.com/apptoken-refresh?consumerkey=<consumer_key>&consumersecret=<consumer_secret>&oldtoken=<original_token>&validity=<validity_period>'
+
+Fields:
+consumerkey - required - consumer key visible from SDC Application screens.
+consumersecret - required - consumer secret visible from SDC Application screens.
+oldtoken - required - an old token from the SDC Application screens.
+validity - optional - validity periods are in milliseconds.  Defaults to 3600000 (1 hour)
+		0 sets a non-expring token.
+The validity returned by the refresh call will be either the length for a new token,
+or the remaining duration for an existing token.  If a valid active token exists, that token
+is the one that will be returned.  """
 
 import sys
 
@@ -26,7 +27,7 @@ class SDCToken():
 	"""SDC Token utilities"""
 
 	SDC_BASE_URL="https://api.syniverse.com"
-	REFRESH_URI="/saop-rest-data/v1/apptoken-refresh"
+	REFRESH_URI="/apptoken-refresh"
 	DEFAULT_VALIDITY_PERIOD=3600
 	VALID_PARAMS=("consumer_key","consumer_secret","validity_period")
 #	?consumerkey=" + consumer_key + "&consumersecret=" + consumer_secret + "&oldtoken=" + original_token + "&validity=" + validity_period
@@ -43,6 +44,7 @@ class SDCToken():
 	#enddef
 
 	def set(self, param=None, value=None):
+		"""Set a SDCToken parameter"""
 		if param is None:
 			raise ValueError
 		if param not in self.VALID_PARAMS:
@@ -51,12 +53,14 @@ class SDCToken():
 	#enddef
 
 	def get(self, param=None):
+		"""Get a SDCToken parameter"""
 		if param not in self.VALID_PARAMS:
 			raise ValueError
 		return self.DATA[param]
 	#enddef
 
 	def refresh(self,token,validity_period=None):
+		"""Refresh the token"""
 		token_refresh_url=self.token_url(token)
 
 		req=urllib.request.Request(token_refresh_url)
@@ -75,6 +79,7 @@ class SDCToken():
 	#enddef
 
 	def token_url(self,token,validity_period=None):
+		"""Returns the full token refresh url"""
 		consumer_key=self.get('consumer_key')
 		consumer_secret=self.get('consumer_secret')
 
@@ -84,6 +89,9 @@ class SDCToken():
 			raise ValueError
 
 		if validity_period is None:
+			if self.validity_period is None:
+				self.validity_period=self.DEFAULT_VALIDITY_PERIOD
+
 			validity_period=self.DEFAULT_VALIDITY_PERIOD
 
 		return(self.SDC_BASE_URL + self.REFRESH_URI + "?consumerkey=" + consumer_key + "&consumersecret=" + consumer_secret + "&oldtoken=" + token + "&validity=" + str(validity_period))
@@ -91,10 +99,12 @@ class SDCToken():
 	#enddef
 
 	def get_token(self):
+		"""Returns the token"""
 		return(self.token)
 	#enddef
 
 	def get_validity_period(self):
+		"""Returns the validity period"""
 		return(self.validity_period)
 	#enddef
 

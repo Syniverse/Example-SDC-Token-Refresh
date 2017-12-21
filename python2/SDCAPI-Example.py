@@ -1,7 +1,9 @@
 #!/usr/bin/python2
 
 # Name: SDCToken-Example.py
-# Purpose: Example useage of SDCToken library
+# Purpose: Example useage of SDCToken library.  This has 2 functions and a short loop at the bottom.
+#          Update the token validation fields at the bottom to reflect the same information
+#          in the Syniverse Developer Community site for your configuration applications.
 #
 #
 # Fields:
@@ -17,12 +19,13 @@ import urllib2
 import time
 import sys
 
-def sdc_refresh(sdctoken,original_token,validity_period=None):
-	# reset base url
-	sdctoken.SDC_BASE_URL="https://beta-api.syniverse.com"
-#	sdctoken.SDC_BASE_URL="https://beta.api.syniverse.com"
-#	sdctoken.SDC_BASE_URL="https://betaapi.syniverse.com"
+# Refresh function.
+# Main purpose is to catch the errors from the refresh and display the changed
+# token and expiration information.
+# Note that once the token is refreshed, the validity period in the token object
+# will not change until the call receives a HTTP 401 and the refresh is run again.
 
+def sdc_refresh(sdctoken,original_token,validity_period=None):
 	try:
 		sdctoken.refresh(original_token,validity_period)
 	except urllib2.URLError as e:
@@ -41,6 +44,9 @@ def sdc_refresh(sdctoken,original_token,validity_period=None):
 	print("new validity: " + str(sdctoken.validity_period))
 #enddef
 
+# API call function.
+# In this case, this is a post request (using url request with data content).
+# Main purpose is to catch the HTTP 401 and re-issue the request after token refresh.
 def sdc_api_call(run,url):
 	myreq=urllib2.Request(url,'{"Test":"This"}');
 	myreq.add_header('Authorization','Bearer ' + my_sdc_token.token)
@@ -57,8 +63,9 @@ def sdc_api_call(run,url):
 			if e.code == 401:
 				# Refresh the token
 				sdc_refresh(my_sdc_token,my_sdc_token.token,my_validity_period)
-				# Re-run the request.
-				sdc_api_call(run,url)
+
+				# Re-issue the request.
+				sdc_api_call(run, url)
 			else:
 				print("ERROR: " + str(e))
 				print(e)
@@ -75,11 +82,12 @@ def sdc_api_call(run,url):
 	#endtry
 #enddef
 
-my_consumer_key="hESRWCFBOMeuztNkWEqXmSOdQIAa"
-my_consumer_secret="k9AV6fbWDkV2XW21_nk_gxef3RUa"
-my_original_token="9a393ebeba33918a29941a7b64587195"
+
+my_consumer_key="<CONSUMER_KEY>"
+my_consumer_secret="<CONSUMER_SECRET>"
+my_original_token="<ORIGINAL_TOKEN>"
 my_validity_period="600"
-my_api_url="https://beta-api.syniverse.com/saop_mock/v1/hello/testpost-ntv"
+my_api_url="https://api.syniverse.com/<api_to_access>"
 
 my_sdc_token=SDCToken.SDCToken(my_consumer_key, my_consumer_secret)
 
