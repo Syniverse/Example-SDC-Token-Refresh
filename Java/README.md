@@ -1,4 +1,4 @@
-# SDCToken - Java
+# TokenRefresh - Java
 
 ## Syniverse Developer Community API token refresh utility
 
