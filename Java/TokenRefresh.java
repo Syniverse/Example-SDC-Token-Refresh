@@ -10,7 +10,7 @@ import org.json.simple.parser.ParseException;
 
 public class TokenRefresh {
 
-	private static final String URI = "https://beta-api.syniverse.com/saop-rest-data/v1/apptoken-refresh";
+	private static final String URI = "https://api.syniverse.com/apptoken-refresh";
 	
 	/* 
 	 * Parameters:
