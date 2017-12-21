@@ -11,7 +11,7 @@ and refresh the token when it expires.
 |Filename           |Description                                        |
 |-------------------|---------------------------------------------------|
 |TokenRefresh.java|Java main class demonstrating a refresh.|
-|pom.xml|Example using the SDCToken class to refresh a token.|
+|pom.xml|Maven definition file.|
 
 
 ### Usage
