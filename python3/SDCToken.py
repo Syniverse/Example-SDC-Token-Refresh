@@ -40,7 +40,7 @@ class SDCToken():
 		self.DATA={}
 		self.DATA['consumer_key']=consumer_key
 		self.DATA['consumer_secret']=consumer_secret
-		self.DATA['validity_period']=None
+		self.validity_period=None
 	#enddef
 
 	def set(self, param=None, value=None):
